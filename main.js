@@ -1,7 +1,7 @@
 //ユーザーから受け取ったメッセージをオウム返しするサンプルコード
 function doPost(e) {
   //LINE Messaging APIのチャネルアクセストークンを設定
-  let token = "";
+  let token = "GoMUYHkZWSWD5hCvvUM5WwZ/ehSjdf52m1Nn+CqgSCUnDCgcom4et2kEaMYOoHnB5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xu5rfZD6xAIlrVnkQhJ0D5uL1C4dfNsGNZvFzMToM5OPgdB04t89/1O/w1cDnyilFU=";
   // WebHookで取得したJSONデータをオブジェクト化し、取得
   let eventData = JSON.parse(e.postData.contents).events[0];
   //取得したデータから、応答用のトークンを取得
@@ -31,4 +31,20 @@ function doPost(e) {
   };
   //LINE Messaging APIにリクエストし、ユーザーからの投稿に返答する
   UrlFetchApp.fetch(url, options);
+}
+
+
+// 草が生えているか確認するプログラム
+function checkContributions() {
+  var user = "NonokaM"; // GitHubユーザー名
+  var url = "https://github.com/users/" + user + "/contributions"; // ContributionページのURL
+  var response = UrlFetchApp.fetch(url); // HTTPリクエストを送信
+  var html = response.getContentText(); // HTMLのテキストを取得
+  var hasContribution = html.includes("No contribution on Friday, March 14, 2023"); // HTMLテキストに指定された文字列が含まれているかどうかを確認
+  console.log(hasContribution)
+  if (hasContribution) {
+    Logger.log("草生えてないよ");
+  } else {
+    Logger.log("草生えてるよ");
+  }
 }
