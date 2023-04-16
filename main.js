@@ -35,43 +35,27 @@ function doPost(e) {
 
   // 通知時刻を登録するための処理
   if (userMessage === "通知時刻を設定") {
-    let timeMessage = {
-      "type": "datetimepicker",
-      "label": "Select date",
-      "data": "storeId=12345",
-      "mode": "datetime",
-      "initial": "2017-12-25t00:00",
-      "max": "2018-01-24t23:59",
-      "min": "2017-12-25t00:00"
-    }
-    replyMessage(replyToken, timeMessage);
+    // let timeMessage = 
+    replyMessage(
+      replyToken,
+      {
+      type: 'template',
+      altText: 'Datetime pickers alt text',
+      template: {
+        type: 'buttons',
+        text: 'Select date / time !',
+        actions: [
+          { type: 'datetimepicker',
+           label: 'time',
+           data: 'TIME',
+           mode: 'time',
+           initial: "21:00"
+          }
+        ],
+      },
+      }
+    )
   }
-
-  // if (userMessage !== "Githubユーザー名を設定" && eventData.message.type === "text") {
-  //   sendTime = userMessage;
-
-  //   // ユーザー名を登録した後の処理
-  //   if (username !== "") {
-  //     let message = {
-  //       type: "text",
-  //       text: `ユーザー名を${username}に設定しました。`
-  //     };
-  //     replyMessage(replyToken, message);
-  //     // // ユーザー名を初期化する
-  //     // username = "";
-  //     return;
-  //   }
-  // }
-
-  // } else if (username === "") { // ユーザー名が未登録の場合
-  //   username = userMessage;
-  //   let message = {
-  //     type: "text",
-  //     text: `ユーザー名 ${username} を登録しました。`
-  //   };
-  //   replyMessage(replyToken, message);
-  //   return;
-  // }
 
   // その他の処理（例えば、草の有無をチェックする処理）
   checkContributions(replyToken, url, token, username);
