@@ -1,50 +1,126 @@
-//ユーザーから受け取ったメッセージをオウム返しするサンプルコード
 function doPost(e) {
-  //LINE Messaging APIのチャネルアクセストークンを設定
   let token = "GoMUYHkZWSWD5hCvvUM5WwZ/ehSjdf52m1Nn+CqgSCUnDCgcom4et2kEaMYOoHnB5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xu5rfZD6xAIlrVnkQhJ0D5uL1C4dfNsGNZvFzMToM5OPgdB04t89/1O/w1cDnyilFU=";
-  // WebHookで取得したJSONデータをオブジェクト化し、取得
   let eventData = JSON.parse(e.postData.contents).events[0];
-  //取得したデータから、応答用のトークンを取得
   let replyToken = eventData.replyToken;
-  //取得したデータから、メッセージ種別を取得
-  let messageType = eventData.message.type;
-  //取得したデータから、ユーザーが投稿したメッセージを取得
   let userMessage = eventData.message.text;
-  // 応答メッセージ用のAPI URLを定義
   let url = 'https://api.line.me/v2/bot/message/reply';
-  //ユーザーからの投稿メッセージから応答メッセージを用意
-  let replyMessage = "投稿種別：" + messageType + "\n投稿内容：" + userMessage;
-  //APIリクエスト時にセットするペイロード値を設定する
-  let payload = {
-    'replyToken': replyToken,
-    'messages': [{
-        'type': 'text',
-        'text': replyMessage
-      }]
-  };
-  //HTTPSのPOST時のオプションパラメータを設定する
-  let options = {
-    'payload' : JSON.stringify(payload),
-    'myamethod'  : 'POST',
-    'headers' : {"Authorization" : "Bearer " + token},
-    'contentType' : 'application/json'
-  };
-  //LINE Messaging APIにリクエストし、ユーザーからの投稿に返答する
-  UrlFetchApp.fetch(url, options);
-}
+
+  // ユーザー名を保存するためのグローバル変数
+  let username = "";
+
+  // ユーザー名を登録するための処理
+  if (userMessage === "Githubユーザー名を設定") {
+    let message = {
+      type: "text",
+      text: "ユーザー名を教えてください。"
+    };
+    replyMessage(replyToken, message);
+  }
+
+  if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定" && eventData.message.type === "text") {
+    username = userMessage;
+
+    // ユーザー名を登録した後の処理
+    if (username !== "") {
+      let message = {
+        type: "text",
+        text: `ユーザー名を${username}に設定しました。`
+      };
+      replyMessage(replyToken, message);
+      // // ユーザー名を初期化する
+      // username = "";
+      return;
+    }
+  }
+
+  // 通知時刻を登録するための処理
+  if (userMessage === "通知時刻を設定") {
+    let timeMessage = {
+      "type": "datetimepicker",
+      "label": "Select date",
+      "data": "storeId=12345",
+      "mode": "datetime",
+      "initial": "2017-12-25t00:00",
+      "max": "2018-01-24t23:59",
+      "min": "2017-12-25t00:00"
+    }
+    replyMessage(replyToken, timeMessage);
+  }
+
+  // if (userMessage !== "Githubユーザー名を設定" && eventData.message.type === "text") {
+  //   sendTime = userMessage;
+
+  //   // ユーザー名を登録した後の処理
+  //   if (username !== "") {
+  //     let message = {
+  //       type: "text",
+  //       text: `ユーザー名を${username}に設定しました。`
+  //     };
+  //     replyMessage(replyToken, message);
+  //     // // ユーザー名を初期化する
+  //     // username = "";
+  //     return;
+  //   }
+  // }
+
+  // } else if (username === "") { // ユーザー名が未登録の場合
+  //   username = userMessage;
+  //   let message = {
+  //     type: "text",
+  //     text: `ユーザー名 ${username} を登録しました。`
+  //   };
+  //   replyMessage(replyToken, message);
+  //   return;
+  // }
+
+  // その他の処理（例えば、草の有無をチェックする処理）
+  checkContributions(replyToken, url, token, username);
 
 
-// 草が生えているか確認するプログラム
-function checkContributions() {
-  var user = "NonokaM"; // GitHubユーザー名
-  var url = "https://github.com/users/" + user + "/contributions"; // ContributionページのURL
-  var response = UrlFetchApp.fetch(url); // HTTPリクエストを送信
-  var html = response.getContentText(); // HTMLのテキストを取得
-  var hasContribution = html.includes("No contribution on Friday, March 14, 2023"); // HTMLテキストに指定された文字列が含まれているかどうかを確認
-  console.log(hasContribution)
-  if (hasContribution) {
-    Logger.log("草生えてないよ");
-  } else {
-    Logger.log("草生えてるよ");
+  function checkContributions(replyToken, url, token, username) {
+    let user = username;
+    let git_url = `https://github.com/users/${user}/contributions`;
+    let response = UrlFetchApp.fetch(git_url);
+    let html = response.getContentText();
+    let hasContribution = html.includes("No contributions on Saturday, April 15, 2023");
+    console.log(hasContribution)
+    let replyMessage = "";
+    if (hasContribution) {
+      replyMessage = "草生えてないよ";
+      console.log("草生えてないよ");
+    } else {
+      replyMessage = "草生えてるよ";
+      console.log("草生えてるよ");
+    }
+
+    let message = {
+      type: "text",
+      text: replyMessage
+    };
+    let payload = {
+      replyToken: replyToken,
+      messages: [message]
+    };
+    let options = {
+      payload: JSON.stringify(payload),
+      method: 'POST',
+      headers: {"Authorization" : "Bearer " + token},
+      contentType: 'application/json'
+    };
+    UrlFetchApp.fetch(url, options);
+  }
+
+  function replyMessage(replyToken, message) {
+    let payload = {
+      replyToken: replyToken,
+      messages: [message]
+    };
+    let options = {
+      payload: JSON.stringify(payload),
+      method: 'POST',
+      headers: {"Authorization" : "Bearer " + token},
+      contentType: 'application/json'
+    };
+    UrlFetchApp.fetch(url, options);
   }
 }
