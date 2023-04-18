@@ -10,7 +10,6 @@ function doPost(e) {
 
   // 時間選択アクションが起こったとき
   if (eventData.type === "postback") {
-    sendMessage = 
     let message = {
       type: "text",
       text: `通知時刻を${username}に設定しました。`,
