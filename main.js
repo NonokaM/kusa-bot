@@ -1,5 +1,5 @@
 function doPost(e) {
-  let token = "GoMUYHkZWSWD5hCvvUM5WwZ/ehSjdf52m1Nn+CqgSCUnDCgcom4et2kEaMYOoHnB5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xu5rfZD6xAIlrVnkQhJ0D5uL1C4dfNsGNZvFzMToM5OPgdB04t89/1O/w1cDnyilFU=";
+  let token = "";
   let eventData = JSON.parse(e.postData.contents).events[0];
   let replyToken = eventData.replyToken;
   // let userMessage = eventData.message.text;
@@ -8,30 +8,35 @@ function doPost(e) {
   // ユーザー名を保存するためのグローバル変数
   let username = "";
 
-  // 時間選択アクションが起こったとき
-  if (eventData.type === "postback") {
-    let message = {
-      type: "text",
-      text: `通知時刻を${username}に設定しました。`,
-    };
-    replyMessage(replyToken, message);
-  }
 
-  if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定" && eventData.message.type === "text") {
-    username = userMessage;
+  if (eventData.message.text) {
+    let userMessage = eventData.message.text;
 
-    // ユーザー名を登録した後の処理
-    if (username !== "") {
+    if (userMessage === "Githubユーザー名を設定") {
       let message = {
         type: "text",
-        text: `ユーザー名を${username}に設定しました。`
-      };
+        text: "Githubのユーザー名を入力してください。"
+      }
       replyMessage(replyToken, message);
-      // // ユーザー名を初期化する
-      // username = "";
-      return;
     }
-  }
+
+
+    if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定") {
+      let username = userMessage;
+
+      // ユーザー名を登録した後の処理
+      if (username !== "") {
+        let message = {
+          type: "text",
+          text: `ユーザー名を${username}に設定しました。`
+        };
+        replyMessage(replyToken, message);
+        // // ユーザー名を初期化する
+        // username = "";
+        return;
+      }
+    }
+
 
   // 通知時刻を登録するための処理
   if (userMessage === "通知時刻を設定") {
@@ -56,49 +61,18 @@ function doPost(e) {
       }
     )
   }
+  }
 
 
-
-
-  // // Postback event listener
-  // if (eventData.postback && eventData.postback.data === "TIME") {
-  //   const replyMessage = {
-  //     type: "text",
-  //     text: "ポストバックを受け取りました。",
-  //   };
-  //   replyMessage(replyToken, replyMessage);
-  // }
-
-
-  // // Postback event listener
-  // if (event.postback.data === 'TIME') {
-  //   // const time = event.postback.params[time];
-  //   const replyMessage = { type: 'text', text: `通知時刻設定しました。`};
-  //   replyMessage(replyToken, replyMessage);
-  // }
-
-
-
-
-  // // Postback event listener
-  // if (event.postback.data === 'TIME') {
-  //   const time = event.postback.params.time;
-  //   const replyText = `通知時刻を ${time} に設定しました。`;
-  //   const replyMessage = { type: 'text', text: replyText };
-  //   replyMessage(replyToken, replyMessage);
-  // }
-
-  // eventData = JSON.parse(e.postData.contents).events[1];
-
-  // if (eventData.message.type === "datetimepicker") {
-  //     let message = {
-  //     type: "text",
-  //     text: "受け取ったよ"
-  //   };
-  //   replyMessage(replyToken, message);
-  // }
-
-
+  // 時間選択アクションが起こったとき
+  if (eventData.type === "postback") {
+    let sendMessage = eventData.postback.params.time;
+    let message = {
+      type: "text",
+      text: `通知時刻を${sendMessage}に設定しました。`,
+    };
+    replyMessage(replyToken, message);
+  }
 
 
   // その他の処理（例えば、草の有無をチェックする処理）
@@ -115,10 +89,8 @@ function doPost(e) {
     let replyMessage = "";
     if (hasContribution) {
       replyMessage = "草生えてないよ";
-      console.log("草生えてないよ");
     } else {
       replyMessage = "草生えてるよ";
-      console.log("草生えてるよ");
     }
 
     let message = {
