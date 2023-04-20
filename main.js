@@ -1,5 +1,5 @@
 function doPost(e) {
-  let token = "GoMUYHkZWSWD5hCvvUM5WwZ/ehSjdf52m1Nn+CqgSCUnDCgcom4et2kEaMYOoHnB5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xu5rfZD6xAIlrVnkQhJ0D5uL1C4dfNsGNZvFzMToM5OPgdB04t89/1O/w1cDnyilFU=";
+  let token = "";
   let eventData = JSON.parse(e.postData.contents).events[0];
   let replyToken = eventData.replyToken;
   // let userMessage = eventData.message.text;
