@@ -1,14 +1,14 @@
 function doPost(e) {
-  let token = "";
+  let token = "GoMUYHkZWSWD5hCvvUM5WwZ/ehSjdf52m1Nn+CqgSCUnDCgcom4et2kEaMYOoHnB5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xu5rfZD6xAIlrVnkQhJ0D5uL1C4dfNsGNZvFzMToM5OPgdB04t89/1O/w1cDnyilFU=";
   let eventData = JSON.parse(e.postData.contents).events[0];
   let replyToken = eventData.replyToken;
   // let userMessage = eventData.message.text;
   let url = 'https://api.line.me/v2/bot/message/reply';
 
   // ユーザー名を保存するためのグローバル変数
-  let username = "";
+  // var username = "";
 
-
+  // テキストメッセージを受け取ったとき
   if (eventData.message.text) {
     let userMessage = eventData.message.text;
 
@@ -21,55 +21,72 @@ function doPost(e) {
     }
 
 
-    if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定") {
-      let username = userMessage;
-
-      // ユーザー名を登録した後の処理
-      if (username !== "") {
-        let message = {
-          type: "text",
-          text: `ユーザー名を${username}に設定しました。`
-        };
-        replyMessage(replyToken, message);
-        // // ユーザー名を初期化する
-        // username = "";
-        return;
+    if (userMessage === "現在の草情報") {
+      let message = {
+        type: "text",
+        text: "今日はまだ草が生えていません。"
       }
+      replyMessage(replyToken, message);
     }
 
 
-  // 通知時刻を登録するための処理
-  if (userMessage === "通知時刻を設定") {
-    // let timeMessage = 
-    replyMessage(
-      replyToken,
-      {
-      type: 'template',
-      altText: 'Datetime pickers alt text',
-      template: {
-        type: 'buttons',
-        text: 'Select date / time !',
-        actions: [
-          { type: 'datetimepicker',
-           label: 'time',
-           data: 'TIME',
-           mode: 'time',
-           initial: "21:00"
-          }
-        ],
-      },
-      }
-    )
-  }
+    // 時間選択アクションを起こす
+    if (userMessage === "通知時刻を設定") {
+      // let timeMessage = 
+      replyMessage(
+        replyToken,
+        {
+        type: 'template',
+        altText: 'Datetime pickers alt text',
+        template: {
+          type: 'buttons',
+          text: 'Select date / time !',
+          actions: [
+            { type: 'datetimepicker',
+            label: 'time',
+            data: 'TIME',
+            mode: 'time',
+            initial: "21:00"
+            }
+          ],
+        },
+        }
+      )
+    }
+
+
+    // if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定") {
+    // let username = userMessage;
+
+    var userId = event.source.userId;
+    var text = event.message.text;
+    var properties = PropertiesService.getUserProperties();
+    properties.setProperty(userId, text);
+
+    var properties = PropertiesService.getUserProperties();
+    var savedText = properties.getProperty(userId);
+
+    // ユーザー名を登録した後の処理
+    if (username !== "") {
+      let message = {
+        type: "text",
+        text: `ユーザー名を${savedText}に設定しました。`
+      };
+      replyMessage(replyToken, message);
+      // // ユーザー名を初期化する
+      // username = "";
+      return;
+    }
+    // }
   }
 
 
-  // 時間選択アクションが起こったとき
+  // 時間選択アクションを受け取ったとき
   if (eventData.type === "postback") {
-    let sendMessage = eventData.postback.params.time;
+    var kusaCheckTime = eventData.postback.params.time;
     let message = {
       type: "text",
-      text: `通知時刻を${sendMessage}に設定しました。`,
+      text: `通知時刻を${kusaCheckTime}に設定しました。`,
     };
     replyMessage(replyToken, message);
   }
