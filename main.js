@@ -1,5 +1,5 @@
 function doPost(e) {
-  let token = "";
+  let token = "GoMUYHkZWSWD5hCvvUM5WwZ/ehSjdf52m1Nn+CqgSCUnDCgcom4et2kEaMYOoHnB5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xu5rfZD6xAIlrVnkQhJ0D5uL1C4dfNsGNZvFzMToM5OPgdB04t89/1O/w1cDnyilFU=";
   let eventData = JSON.parse(e.postData.contents).events[0];
   let replyToken = eventData.replyToken;
   // let userMessage = eventData.message.text;
@@ -7,6 +7,19 @@ function doPost(e) {
 
   // ユーザー名を保存するためのグローバル変数
   // var username = "";
+
+
+  // 時間選択アクションを受け取ったとき
+  // 多分LINEBOTでは複数のif文実行中に待機しないから、ポストバックの処理を先にかかないとこのあとのtextでエラー吐いて動かなくなるよ
+  if (eventData.type === "postback") {
+    var kusaCheckTime = eventData.postback.params.time;
+    let message = {
+      type: "text",
+      text: `通知時刻を${kusaCheckTime}に設定しました。`,
+    };
+    replyMessage(replyToken, message);
+  }
+
 
   // テキストメッセージを受け取ったとき
   if (eventData.message.text) {
@@ -56,7 +69,7 @@ function doPost(e) {
 
 
     // if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定") {
-    // let username = userMessage;
+    let username = userMessage;
 
     var userId = event.source.userId;
     var text = event.message.text;
@@ -80,16 +93,6 @@ function doPost(e) {
     // }
   }
 
-
-  // 時間選択アクションを受け取ったとき
-  if (eventData.type === "postback") {
-    var kusaCheckTime = eventData.postback.params.time;
-    let message = {
-      type: "text",
-      text: `通知時刻を${kusaCheckTime}に設定しました。`,
-    };
-    replyMessage(replyToken, message);
-  }
 
 
   // その他の処理（例えば、草の有無をチェックする処理）
