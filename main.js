@@ -1,13 +1,9 @@
 function doPost(e) {
   let eventData = JSON.parse(e.postData.contents).events[0];
-  let token = "";
+  let token = "HBbIZFhu3X10hH+MxVaUN96fijH3cfhsR2sr4iwqCmlwYGCptSTWl3Ut29XW5fGz5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xuI2GNsHoOCZzzllQGZXf/MfF3F2qno8kAkI+5ZDDQvCAdB04t89/1O/w1cDnyilFU=";
   let replyToken = eventData.replyToken;
   // let userId = eventData.source.userId;
-
-  // let userMessage = eventData.message.text;
-
-  // ユーザー名を保存するためのグローバル変数
-  // var username = "";
+  let userId = eventData.source.userId;
 
 
   // 時間選択アクションを受け取ったとき
@@ -77,35 +73,28 @@ function doPost(e) {
 
 
     // if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定") {
-    let username = userMessage;
+    let userName = userMessage;
+    let messageText = "";
 
-    var userId = eventData.source.userId;
-    // var savedText = eventData.message.text;
     var properties = PropertiesService.getUserProperties();
-    // properties.setProperty(userId, username);
     var savedText = properties.getProperty(userId);
 
     // ユーザー名を登録した後の処理
     if (savedText === null) {
-    properties.setProperty(userId, username);
-    var savedText = properties.getProperty(userId);
-
-      let message = {
-        type: "text",
-        text: `ユーザー名を${savedText}に設定しました。`
-      };
-      replyMessage(token, replyToken, message);
-      // // ユーザー名を初期化する
-      // username = "";
-      // return;
+      properties.setProperty(userId, userName);
+      var savedText = properties.getProperty(userId);
+      messageText = `ユーザー名を${savedText}に設定しました。`
     } else {
-      savedText = properties.getProperty(userId);
-      let message = {
-        type: "text",
-        text: `ユーザー名は${savedText}に設定済みです。`
-      }
-      replyMessage(token, replyToken, message);
+      properties.setProperty(userId, userName);
+      var savedText = properties.getProperty(userId);
+      messageText = `ユーザー名を${savedText}に変更しました。`
     }
+
+    let message = {
+      type: "text",
+      text: messageText
+    }
+    replyMessage(token, replyToken, message);
     // }
   }
 }
