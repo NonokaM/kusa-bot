@@ -1,11 +1,10 @@
 function doPost(e) {
-  let token = "HBbIZFhu3X10hH+MxVaUN96fijH3cfhsR2sr4iwqCmlwYGCptSTWl3Ut29XW5fGz5KwL9K92JZIXmbSIN+uXiNYjTx/wdKS2sMqnNh4Q3xuI2GNsHoOCZzzllQGZXf/MfF3F2qno8kAkI+5ZDDQvCAdB04t89/1O/w1cDnyilFU=";
   let eventData = JSON.parse(e.postData.contents).events[0];
+  let token = "";
   let replyToken = eventData.replyToken;
-  // let userMessage = eventData.message.text;
+  // let userId = eventData.source.userId;
 
-  let url = 'https://api.line.me/v2/bot/message/reply';
-  // let push_url = 'https://api.line.me/v2/bot/message/push';
+  // let userMessage = eventData.message.text;
 
   // ユーザー名を保存するためのグローバル変数
   // var username = "";
@@ -22,7 +21,7 @@ function doPost(e) {
       type: "text",
       text: `通知時刻を${kusaCheckTime}に設定しました。`,
     };
-    replyMessage(replyToken, message);
+    replyMessage(token, replyToken, message);
   }
 
 
@@ -34,17 +33,20 @@ function doPost(e) {
       let message = {
         type: "text",
         text: "Githubのユーザー名を入力してください。"
-      }
-      replyMessage(replyToken, message);
+      };
+      replyMessage(token, replyToken, message);
     }
 
 
     if (userMessage === "現在の草情報") {
+
+      var contributionsMessage = checkContributions();
+
       let message = {
         type: "text",
-        text: "今日はまだ草が生えていません。"
+        text: contributionsMessage
       }
-      replyMessage(replyToken, message);
+      replyMessage(token, replyToken, message);
     }
 
 
@@ -52,6 +54,7 @@ function doPost(e) {
     if (userMessage === "通知時刻を設定") {
       // let timeMessage =
       replyMessage(
+        token,
         replyToken,
         {
         type: 'template',
@@ -76,77 +79,33 @@ function doPost(e) {
     // if (userMessage !== "Githubユーザー名を設定" && userMessage !== "通知時刻を設定") {
     let username = userMessage;
 
-    // var userId = eventData.source.userId;
-    var text = eventData.message.text;
-    // var properties = PropertiesService.getUserProperties();
-    // properties.setProperty('key', username);
-    // var savedText = properties.getProperty('key');
+    var userId = eventData.source.userId;
+    // var savedText = eventData.message.text;
+    var properties = PropertiesService.getUserProperties();
+    // properties.setProperty(userId, username);
+    var savedText = properties.getProperty(userId);
 
     // ユーザー名を登録した後の処理
-    if (username !== "") {
+    if (savedText === null) {
+    properties.setProperty(userId, username);
+    var savedText = properties.getProperty(userId);
+
       let message = {
         type: "text",
         text: `ユーザー名を${savedText}に設定しました。`
       };
-      replyMessage(replyToken, message);
+      replyMessage(token, replyToken, message);
       // // ユーザー名を初期化する
       // username = "";
       // return;
+    } else {
+      savedText = properties.getProperty(userId);
+      let message = {
+        type: "text",
+        text: `ユーザー名は${savedText}に設定済みです。`
+      }
+      replyMessage(token, replyToken, message);
     }
     // }
-  }
-
-
-  // その他の処理（例えば、草の有無をチェックする処理）
-  // checkContributions(replyToken, url, token);
-
-  // function checkContributions(replyToken, push_url, token) {
-  //   // let user = savedText = properties.getProperty('key');
-
-  //   let user = 'NonokaM';
-  //   let git_url = `https://github.com/users/${user}/contributions?from=2023-01-01`;
-  //   let response = UrlFetchApp.fetch(git_url);
-  //   let html = response.getContentText();
-
-  //   let hasContribution = html.includes("No contributions on Sunday, April 23, 2023");
-  //   let replyMessage = "";
-
-  //   if (hasContribution) {
-  //     replyMessage = "草生えてないよ";
-  //   } else {
-  //     replyMessage = "草生えてるよ";
-  //   }
-
-  //   // replyMessage = git_url;
-
-  //   let message = {
-  //     type: "text",
-  //     text: replyMessage
-  //   };
-  //   let payload = {
-  //     replyToken: replyToken,
-  //     messages: [message]
-  //   };
-  //   let options = {
-  //     payload: JSON.stringify(payload),
-  //     method: 'POST',
-  //     headers: {"Authorization" : "Bearer " + token},
-  //     contentType: 'application/json'
-  //   };
-  //   UrlFetchApp.fetch(url, options);
-  // }
-
-  function replyMessage(replyToken, message) {
-    let payload = {
-      replyToken: replyToken,
-      messages: [message]
-    };
-    let options = {
-      payload: JSON.stringify(payload),
-      method: 'POST',
-      headers: {"Authorization" : "Bearer " + token},
-      contentType: 'application/json'
-    };
-    UrlFetchApp.fetch(url, options);
   }
 }
