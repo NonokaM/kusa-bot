@@ -1,4 +1,7 @@
-function replyMessage(token, replyToken, message) {
+var token = "";
+
+
+function replyMessage(replyToken, message) {
   let url = 'https://api.line.me/v2/bot/message/reply';
 
   let payload = {
@@ -15,7 +18,7 @@ function replyMessage(token, replyToken, message) {
 }
 
 
-function pushMessage(token, userId, pushMessageText) {
+function pushMessage(userId, pushMessageText) {
   let push_url = 'https://api.line.me/v2/bot/message/push';
   const message = {
     type: 'text',
