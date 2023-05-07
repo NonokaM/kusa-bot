@@ -1,10 +1,8 @@
 // GASで定期実行のトリガーをつくる
-// 複数回実行して同じトリガーを増やさないよう注意
-
 
 function setDailyTrigger(kusaCheckTime) {
   if (kusaCheckTime) {
-    var [hour, minute] = kusaCheckTime.split(":").map(str => parseInt(str));
+    let [hour, minute] = kusaCheckTime.split(":").map(str => parseInt(str));
     ScriptApp.newTrigger("pushContributions")
       .timeBased()
       .atHour(hour)
@@ -14,9 +12,15 @@ function setDailyTrigger(kusaCheckTime) {
   }
 }
 
+
+// 定期実行する関数
+// 草が生えていないとき、メッセージを送信する
+
 function pushContributions() {
   let pushMessageText = checkContributions();
-  let properties = PropertiesService.getUserProperties();
-  let userId = properties.getProperty('key');
-  pushMessage(userId, pushMessageText);
+  if (pushMessageText === '草生えてないよ') {
+    let properties = PropertiesService.getUserProperties();
+    let userId = properties.getProperty('userIdKey');
+    pushMessage(userId, pushMessageText);
+  }
 }
