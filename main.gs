@@ -5,12 +5,9 @@ function doPost(e) {
   let properties = PropertiesService.getUserProperties();
   properties.setProperty('userIdKey', userId);
 
-
-  // 時間選択アクションを受け取ったとき
   if (eventData.type === "postback") {
     let kusaCheckTime = eventData.postback.params.time;
 
-    // トリガーを登録
     setDailyTrigger(kusaCheckTime);
 
     let message = {
@@ -20,8 +17,6 @@ function doPost(e) {
     replyMessage(replyToken, message);
   }
 
-
-  // テキストメッセージを受け取ったとき
   if (eventData.message.text) {
     let userMessage = eventData.message.text;
 
@@ -33,7 +28,6 @@ function doPost(e) {
       replyMessage(replyToken, message);
     }
 
-
     if (userMessage === "現在の草情報") {
 
       let contributionsMessage = checkContributions();
@@ -44,7 +38,6 @@ function doPost(e) {
       }
       replyMessage(replyToken, message);
     }
-
 
     // 時間選択アクションを起こす
     if (userMessage === "通知時刻を設定") {
@@ -71,7 +64,6 @@ function doPost(e) {
 
 
     if (userMessage !== "Githubユーザー名を設定" && userMessage !== "現在の草情報" && userMessage !== "通知時刻を設定"){
-      // ユーザー名を登録
       let userName = userMessage;
       let messageText = "";
       properties = PropertiesService.getUserProperties();
@@ -95,7 +87,6 @@ function doPost(e) {
     }
   }
 }
-
 
 
 // 関数が実行されたとき、その日、Githubに草が生えているか判別する
@@ -122,7 +113,6 @@ function checkContributions() {
 }
 
 
-
 // GASで定期実行のトリガーをつくる
 
 function setDailyTrigger(kusaCheckTime) {
@@ -136,6 +126,7 @@ function setDailyTrigger(kusaCheckTime) {
       .create();
   }
 }
+
 
 // 定期実行する関数
 // 草が生えていないとき、メッセージを送信する
