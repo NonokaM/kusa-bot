@@ -1,7 +1,6 @@
 const token = "CHANNEL_ACCESS_TOKEN";
 
 
-// 返信メッセージを送る
 function replyMessage(replyToken, message) {
   const replyUrl = 'https://api.line.me/v2/bot/message/reply';
   let payload = {
@@ -18,7 +17,6 @@ function replyMessage(replyToken, message) {
 }
 
 
-// メッセージを送信する
 function pushMessage(userId, pushMessageText) {
   const push_url = 'https://api.line.me/v2/bot/message/push';
   let message = {
