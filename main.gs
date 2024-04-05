@@ -7,7 +7,6 @@ function doPost(e) {
 
   if (eventData.type === "postback") {
     let kusaCheckTime = eventData.postback.params.time;
-
     setDailyTrigger(kusaCheckTime);
 
     let message = {
@@ -29,9 +28,7 @@ function doPost(e) {
     }
 
     if (userMessage === "現在の草情報") {
-
       let contributionsMessage = checkContributions();
-
       let message = {
         type: "text",
         text: contributionsMessage
@@ -90,7 +87,6 @@ function doPost(e) {
 
 
 // 関数が実行されたとき、その日、Githubに草が生えているか判別する
-
 function checkContributions() {
   let formattedDate = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -114,7 +110,6 @@ function checkContributions() {
 
 
 // GASで定期実行のトリガーをつくる
-
 function setDailyTrigger(kusaCheckTime) {
   if (kusaCheckTime) {
     let [hour, minute] = kusaCheckTime.split(":").map(str => parseInt(str));
@@ -130,7 +125,6 @@ function setDailyTrigger(kusaCheckTime) {
 
 // 定期実行する関数
 // 草が生えていないとき、メッセージを送信する
-
 function pushContributions() {
   let pushMessageText = checkContributions();
   if (pushMessageText === '草生えてないよ') {
