@@ -35,9 +35,9 @@
   <tr />
   <tr>
     <td>
-      <img src="/images/notification-1.jpg" style="width: 250px;">
-      <img src="/images/notification-2.jpg" style="width: 252px;">
-      <img src="/images/notification-3.jpg" style="width: 250px;">
+      <img src="/images/notification-1.jpg" style="width: 300px;">
+      <img src="/images/notification-2.jpg" style="width: 303px;">
+      <img src="/images/notification-3.jpg" style="width: 300px;">
     </td>
   </tr>
   <tr>
